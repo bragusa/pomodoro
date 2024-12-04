@@ -1,0 +1,130 @@
+.main-card {
+  margin: auto;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 18rem; 
+
+  & > div:first-of-type {
+    button {
+      border: 1px solid transparent;
+      background-color: transparent;
+      border-radius: 50%;
+      width: 1.3rem;
+      height: 1.3rem;
+    }
+  }
+
+  & > div:not(:first-of-type) {
+    margin-block-start: 1rem;
+    border: 1px solid #000;
+    background-color: #fff;
+    padding: 1rem;
+  }
+
+  .main-card-image {
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-origin: content-box;
+    width: 2rem;
+    height: 2rem;
+    position: absolute;
+    left: -1.5rem;
+    border-radius: 50%;
+    top: 1rem;
+    background-color: inherit;
+    padding: 10px;
+    border: 1px solid #000;
+  }
+}
+
+.Timer {
+  font-size: 3rem;
+  font-weight: 600;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .control-buttons {
+    padding-block: 1rem;
+    display: flex;
+
+    .main-button {
+      height: 2rem;
+      background: transparent;
+      border: 1px solid #000;
+      color: #000;
+    }
+
+    button {
+      margin-inline: 0.5rem;
+
+      svg {
+        width: 20px;
+        height: 20px;
+      }
+    }
+
+    button:not(.main-button) {
+      border: 1px solid transparent;
+      background-color: transparent;
+      border-radius: 50%;
+      width: 2rem;
+      height: 2rem;
+
+      svg {
+        fill: #000;
+      }
+
+      &:hover {
+        border: 1px solid gray;
+      }
+
+      &:active {
+        border: 1px solid #000;
+      }
+    }
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+
+  .main-card {
+    & > div:first-of-type {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      button {
+        svg {
+          fill: #fff;
+        }
+      }
+    }
+
+    & > div:not(:first-of-type) {
+      background-color: #24232c;
+      color: #fff;;
+      border-color: #fff;
+    }
+
+    .main-card-image {
+      border: 1px solid #ffffff;
+    }
+  }
+
+  .Timer {
+    .control-buttons {
+      .main-button {
+        border: 1px solid #4e4e4e;
+        color: #fff;
+      }
+
+      button:not(.main-button) {
+        svg {
+          fill: #fff;
+        }
+      }
+    }
+  }
+}

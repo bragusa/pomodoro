@@ -1,0 +1,22 @@
+div.Notification {
+    margin: 0.25rem 1rem;
+    border: 1px solid #fff;
+    padding-inline: 1rem;
+    display: inline-block;
+    border-radius: 10px;
+    color: #000;
+    background-color: #fff;
+    box-shadow: inset 2px 2px 4px #c0c0c0;
+    top: -60px;
+    overflow: hidden;
+    transition: top .2s;
+    position: relative;
+}
+
+@media (prefers-color-scheme: dark) {
+    div.Notification  {
+      background: #24232c;
+      color: #fff;
+      box-shadow: inset 2px 2px 4px #efefef;
+    }
+  }
