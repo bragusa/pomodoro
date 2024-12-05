@@ -51,7 +51,7 @@ const Timer = ({ done, session, intervals, restart }) => {
           return newNotifications;
         });
       }, 200);
-    }, 5000);
+    }, 3000);
   }
 
   const pauseTimer = useCallback(() => {
