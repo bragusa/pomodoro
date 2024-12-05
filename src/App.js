@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import './App.scss';
 import Timer from './components/Timer/Timer';
-import ReactDOM from 'react-dom';
 import { showNotification } from './components/Notification/Notification';
 
 

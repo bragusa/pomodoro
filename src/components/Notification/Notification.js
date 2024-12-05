@@ -38,8 +38,8 @@ const AppNotification = ({id, title, message, index}) => {
   }
 
   return <div style={{zIndex: `${200-index}`}} id={id} className='Notification'>
-      {title?<h1>{title}</h1>:null}
-      <p>{message}</p>
+      {title?<h1>{capitalize(title)}</h1>:null}
+      <p>{capitalize(message)}</p>
     </div>
 };
 

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import './Timer.scss';
 import { Restart, Skip } from '../../Resources/svg';
 import AppNotification, { showNotification } from "../Notification/Notification";
@@ -18,15 +18,18 @@ const Timer = ({ done, session, intervals, restart }) => {
   const [notifications, setNotifications] = useState([]);
   const [play] = useSound(Alarm);
 
-  const notify = (notification) => {
-    showNotification(notification.title, notification.message);
+  const notify = ({id,title,message,browser}) => {
+    if(browser){
+      showNotification(title, message);
+    }
+    
     setNotifications((prev) => [
       ...prev,
-      notification
+      {id: id, title: title, message: message}
     ]);
     setTimeout(() => {
       try {
-        document.getElementById(notification.id).style.top='0px';
+        document.getElementById(id).style.top='0px';
       }
       catch(error){
         //safety
@@ -35,7 +38,7 @@ const Timer = ({ done, session, intervals, restart }) => {
     }, 100);
     setTimeout(() => {
       try {
-        document.getElementById(notification.id).style.top='-60px';
+        document.getElementById(id).style.top='-60px';
       }
       catch(error){
         //safety
@@ -51,21 +54,36 @@ const Timer = ({ done, session, intervals, restart }) => {
     }, 5000);
   }
 
-  const next = () => {
-    pauseTimer();
-    if (currentInterval === intervals.length - 1) {
-      done();
-      return; 
+  const pauseTimer = useCallback(() => {
+    // Clear the interval to stop the timer from updating
+    clearInterval(timeInterval);
+    setIsRunning(false);
+  }, [timeInterval]);
+
+  const next = useCallback(() => {
+    // Clear the interval
+    if (timeInterval) {
+      clearInterval(timeInterval);
+      setTimeInterval(null); // Reset the interval in state
     }
-    setRemaining(intervals[currentInterval + 1].seconds);
-    setCurrentInterval(prev => prev + 1);
-  }
+
+    pauseTimer(); // Pause the timer
+
+    // Check if it's the last interval
+    if (currentInterval === intervals.length - 1) {
+      done(); // Call the done callback
+      return;
+    }
+
+    // Move to the next interval
+    setRemaining(intervals[currentInterval + 1]?.seconds || 0);
+    setCurrentInterval((prev) => prev + 1);
+  }, [timeInterval, currentInterval, intervals, done, pauseTimer]);
 
   const skip = () => {
-    notify({id: `skip${new Date().getTime()}`, title: '', message: `${intervals[currentInterval].label} was skipped`})
+    notify({outer: false, id: `skip${new Date().getTime()}`, title: '', message: `${intervals[currentInterval].label} was skipped`})
     next();
   };
-
 
   useEffect(() => {
     clearInterval(timeInterval);
@@ -73,6 +91,7 @@ const Timer = ({ done, session, intervals, restart }) => {
     setIntervalLabel('');
     setCurrentInterval(0);
     setRemaining(intervals[0].seconds);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session, intervals]);
 
 
@@ -80,23 +99,17 @@ const Timer = ({ done, session, intervals, restart }) => {
     if (remaining === 0) {
       play();
       const label = intervals[currentInterval+1] ? intervals[currentInterval+1].label: intervals[0].label;
-      notify({id: `skip${new Date().getTime()}`, title: '', message: `${label} time!. Don't forget to start the timer.`})
+      notify({browser: true, id: `skip${new Date().getTime()}`, title: '', message: `${label} time!. Don't forget to start the timer.`})
       next();
     }
-  }, [remaining]);  
+  }, [remaining, next, play, intervals, currentInterval]);  
 
   useEffect(() => {
     if (currentInterval === intervals.length) {
       done();
     }
     setIntervalLabel(intervals[currentInterval].label);
-  }, [currentInterval]);
-
-  const pauseTimer = () => {
-    // Clear the interval to stop the timer from updating
-    clearInterval(timeInterval);
-    setIsRunning(false);
-  }
+  }, [currentInterval, done, intervals]);
 
   const startTimer = () => {
     // Use setInterval to update the timer every 1000 milliseconds (1 second)
@@ -121,8 +134,7 @@ const Timer = ({ done, session, intervals, restart }) => {
   }
 
   const timerRunning = remaining < intervals[currentInterval].seconds;
-  const label = 'focus time';
-
+  
   let imageURL = isDarkMode() ? BreakLight : BreakDark;
   if(intervalLabel.includes('focus')){
     imageURL = isDarkMode() ? FocusLight : FocusDark;
